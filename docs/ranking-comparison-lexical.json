@@ -1,0 +1,402 @@
+{
+  "version": "0.2.1-alpha",
+  "platform": "Linux",
+  "python": "3.12.14",
+  "provider": {
+    "model": "lexical-only",
+    "revision": "1",
+    "dimension": 0
+  },
+  "corpus": [
+    {
+      "source": "clarity_upscale.json",
+      "anonymous": "case_001.json",
+      "sha256": "97ce8a36a5346c017e386d1580d740f146f17901268b9ac164d9ac5969053456"
+    },
+    {
+      "source": "qwen_edit.json",
+      "anonymous": "case_002.json",
+      "sha256": "eedc10f6fd88d14cf5e3e98fec148ce034aed4f070f251477f025ab197a5acac"
+    },
+    {
+      "source": "qwen_generation.json",
+      "anonymous": "case_003.json",
+      "sha256": "748b823a81cb2cea68f69ad9fb8e4453eb8a69e8f9749b8a0705644b3f3c4c2a"
+    },
+    {
+      "source": "upscale_by_model.json",
+      "anonymous": "case_004.json",
+      "sha256": "3aa8617f5dd5a9b521a9f549882807216d941edbd2f3ee0bfc7079be3db58f13"
+    }
+  ],
+  "index": {
+    "processed": 4,
+    "skipped": 0,
+    "errors": 0,
+    "deleted": 0,
+    "chunks": 231
+  },
+  "index_seconds": 0.014012595999702171,
+  "unchanged_rescan": {
+    "processed": 0,
+    "skipped": 4,
+    "errors": 0,
+    "deleted": 0,
+    "chunks": 0
+  },
+  "modes": {
+    "filename": {
+      "status": "run",
+      "MRR": 0,
+      "Recall5": 0.0,
+      "median_seconds": 0.0005212005000885256,
+      "queries": [
+        {
+          "query": "tiled upscale",
+          "expected": [
+            "clarity_upscale.json"
+          ],
+          "results": [],
+          "seconds": 0.012483346999943024,
+          "reciprocal_rank": 0,
+          "recall5": 0.0
+        },
+        {
+          "query": "тайловый апскейл",
+          "expected": [
+            "clarity_upscale.json"
+          ],
+          "results": [],
+          "seconds": 0.0010672680000425316,
+          "reciprocal_rank": 0,
+          "recall5": 0.0
+        },
+        {
+          "query": "Qwen image editing",
+          "expected": [
+            "qwen_edit.json"
+          ],
+          "results": [],
+          "seconds": 0.00042467999992368277,
+          "reciprocal_rank": 0,
+          "recall5": 0.0
+        },
+        {
+          "query": "редактирование изображения Qwen",
+          "expected": [
+            "qwen_edit.json"
+          ],
+          "results": [],
+          "seconds": 0.0005109100002300693,
+          "reciprocal_rank": 0,
+          "recall5": 0.0
+        },
+        {
+          "query": "ImageUpscaleWithModel",
+          "expected": [
+            "upscale_by_model.json",
+            "clarity_upscale.json"
+          ],
+          "results": [],
+          "seconds": 0.0005314909999469819,
+          "reciprocal_rank": 0,
+          "recall5": 0.0
+        },
+        {
+          "query": "Qwen Image 2512",
+          "expected": [
+            "qwen_generation.json"
+          ],
+          "results": [],
+          "seconds": 0.00041770999996515457,
+          "reciprocal_rank": 0,
+          "recall5": 0.0
+        }
+      ]
+    },
+    "lexical": {
+      "status": "run",
+      "MRR": 1.0,
+      "Recall5": 1.0,
+      "median_seconds": 0.001987920499914253,
+      "queries": [
+        {
+          "query": "tiled upscale",
+          "expected": [
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0012351309997029603,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "тайловый апскейл",
+          "expected": [
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0013171049999982642,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "Qwen image editing",
+          "expected": [
+            "qwen_edit.json"
+          ],
+          "results": [
+            "qwen_edit.json",
+            "qwen_generation.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0029141009999875678,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "редактирование изображения Qwen",
+          "expected": [
+            "qwen_edit.json"
+          ],
+          "results": [
+            "qwen_edit.json",
+            "qwen_generation.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0026587359998302418,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "ImageUpscaleWithModel",
+          "expected": [
+            "upscale_by_model.json",
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "upscale_by_model.json",
+            "clarity_upscale.json"
+          ],
+          "seconds": 0.0009482890000072075,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "Qwen Image 2512",
+          "expected": [
+            "qwen_generation.json"
+          ],
+          "results": [
+            "qwen_generation.json",
+            "qwen_edit.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.00282941400018899,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        }
+      ]
+    },
+    "semantic": {
+      "status": "not_run",
+      "reason": "No local semantic model loaded."
+    },
+    "hybrid_no_structure": {
+      "status": "run",
+      "MRR": 1.0,
+      "Recall5": 1.0,
+      "median_seconds": 0.0019258475001606712,
+      "queries": [
+        {
+          "query": "tiled upscale",
+          "expected": [
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0011618710000220744,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "тайловый апскейл",
+          "expected": [
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0013364340002226527,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "Qwen image editing",
+          "expected": [
+            "qwen_edit.json"
+          ],
+          "results": [
+            "qwen_edit.json",
+            "qwen_generation.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.002628681000260258,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "редактирование изображения Qwen",
+          "expected": [
+            "qwen_edit.json"
+          ],
+          "results": [
+            "qwen_edit.json",
+            "qwen_generation.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0030215430001589993,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "ImageUpscaleWithModel",
+          "expected": [
+            "upscale_by_model.json",
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "upscale_by_model.json",
+            "clarity_upscale.json"
+          ],
+          "seconds": 0.0010884909997912473,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "Qwen Image 2512",
+          "expected": [
+            "qwen_generation.json"
+          ],
+          "results": [
+            "qwen_generation.json",
+            "qwen_edit.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0025152610000986897,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        }
+      ]
+    },
+    "hybrid": {
+      "status": "run",
+      "MRR": 1.0,
+      "Recall5": 1.0,
+      "median_seconds": 0.0019251605001500138,
+      "queries": [
+        {
+          "query": "tiled upscale",
+          "expected": [
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0012094120002075215,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "тайловый апскейл",
+          "expected": [
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0010436229999868374,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "Qwen image editing",
+          "expected": [
+            "qwen_edit.json"
+          ],
+          "results": [
+            "qwen_edit.json",
+            "qwen_generation.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.003522106999753305,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "редактирование изображения Qwen",
+          "expected": [
+            "qwen_edit.json"
+          ],
+          "results": [
+            "qwen_edit.json",
+            "qwen_generation.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.002640909000092506,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "ImageUpscaleWithModel",
+          "expected": [
+            "upscale_by_model.json",
+            "clarity_upscale.json"
+          ],
+          "results": [
+            "upscale_by_model.json",
+            "clarity_upscale.json"
+          ],
+          "seconds": 0.0010860460001822503,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        },
+        {
+          "query": "Qwen Image 2512",
+          "expected": [
+            "qwen_generation.json"
+          ],
+          "results": [
+            "qwen_generation.json",
+            "qwen_edit.json",
+            "clarity_upscale.json",
+            "upscale_by_model.json"
+          ],
+          "seconds": 0.0035321219997968,
+          "reciprocal_rank": 1.0,
+          "recall5": 1.0
+        }
+      ]
+    }
+  },
+  "limitations": "4 public workflows, 6 labeled queries; small development benchmark. No Windows/GPU validation; cannot establish general semantic quality. Test vectors are never used in this benchmark."
+}

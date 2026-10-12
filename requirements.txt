@@ -1,0 +1,10 @@
+PySide6==6.11.2
+numpy==2.3.5
+Pillow==12.3.0
+filelock==4.0.12
+huggingface-hub==1.33.0
+httpx[socks]
+sentence-transformers==6.1.0
+transformers==5.19.0
+rapidocr==3.9.2
+onnxruntime==1.30.0

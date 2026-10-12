@@ -1,0 +1,26 @@
+[
+  {
+    "file": "upscale_by_model.json",
+    "url": "https://raw.githubusercontent.com/cubiq/ComfyUI_Workflows/main/upscale/upscale_by_model.json",
+    "sha256": "3aa8617f5dd5a9b521a9f549882807216d941edbd2f3ee0bfc7079be3db58f13",
+    "bytes": 15287
+  },
+  {
+    "file": "qwen_edit.json",
+    "url": "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/image_qwen_image_edit_2509.json",
+    "sha256": "eedc10f6fd88d14cf5e3e98fec148ce034aed4f070f251477f025ab197a5acac",
+    "bytes": 53283
+  },
+  {
+    "file": "qwen_generation.json",
+    "url": "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/image_qwen_Image_2512.json",
+    "sha256": "748b823a81cb2cea68f69ad9fb8e4453eb8a69e8f9749b8a0705644b3f3c4c2a",
+    "bytes": 52497
+  },
+  {
+    "file": "clarity_upscale.json",
+    "url": "https://raw.githubusercontent.com/hktalent/ComfyUI-workflows/main/ClarityUpscaleSD15.json",
+    "sha256": "97ce8a36a5346c017e386d1580d740f146f17901268b9ac164d9ac5969053456",
+    "bytes": 27453
+  }
+]

@@ -1,0 +1,113 @@
+{
+  "recovery_version": true,
+  "provider": {
+    "model": "lexical-only",
+    "revision": "1",
+    "dimension": 0
+  },
+  "index": {
+    "processed": 4,
+    "skipped": 0,
+    "errors": 0,
+    "deleted": 0,
+    "chunks": 231
+  },
+  "index_seconds": 0.011042444000054275,
+  "unchanged_rescan": {
+    "processed": 0,
+    "skipped": 4,
+    "errors": 0,
+    "deleted": 0,
+    "chunks": 0
+  },
+  "queries": [
+    {
+      "query": "tiled upscale",
+      "expected": [
+        "clarity_upscale.json"
+      ],
+      "results": [
+        "clarity_upscale.json",
+        "upscale_by_model.json"
+      ],
+      "seconds": 0.0012179650000234687,
+      "mrr": 1.0,
+      "recall5": 1.0
+    },
+    {
+      "query": "тайловый апскейл",
+      "expected": [
+        "clarity_upscale.json"
+      ],
+      "results": [
+        "clarity_upscale.json",
+        "upscale_by_model.json"
+      ],
+      "seconds": 0.0009728960000074949,
+      "mrr": 1.0,
+      "recall5": 1.0
+    },
+    {
+      "query": "Qwen image editing",
+      "expected": [
+        "qwen_edit.json"
+      ],
+      "results": [
+        "qwen_edit.json",
+        "qwen_generation.json",
+        "clarity_upscale.json",
+        "upscale_by_model.json"
+      ],
+      "seconds": 0.0024620780000077502,
+      "mrr": 1.0,
+      "recall5": 1.0
+    },
+    {
+      "query": "редактирование изображения Qwen",
+      "expected": [
+        "qwen_edit.json"
+      ],
+      "results": [
+        "qwen_edit.json",
+        "qwen_generation.json",
+        "clarity_upscale.json",
+        "upscale_by_model.json"
+      ],
+      "seconds": 0.002412944999946376,
+      "mrr": 1.0,
+      "recall5": 1.0
+    },
+    {
+      "query": "ImageUpscaleWithModel",
+      "expected": [
+        "upscale_by_model.json",
+        "clarity_upscale.json"
+      ],
+      "results": [
+        "upscale_by_model.json",
+        "clarity_upscale.json"
+      ],
+      "seconds": 0.0008899300000848598,
+      "mrr": 1.0,
+      "recall5": 1.0
+    },
+    {
+      "query": "Qwen Image 2512",
+      "expected": [
+        "qwen_generation.json"
+      ],
+      "results": [
+        "qwen_generation.json",
+        "qwen_edit.json",
+        "clarity_upscale.json",
+        "upscale_by_model.json"
+      ],
+      "seconds": 0.0023004150000360823,
+      "mrr": 1.0,
+      "recall5": 1.0
+    }
+  ],
+  "MRR": 1.0,
+  "Recall5": 1.0,
+  "limitations": "Small recovery smoke benchmark; no Windows/GPU validation."
+}

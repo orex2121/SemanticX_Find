@@ -1,0 +1,30 @@
+# Local runtime and downloaded data
+/runtime/
+/bootstrap/
+/cache/
+/models/
+/indexes/
+/logs/
+/temp/
+/config/
+/.semantic_index/
+
+# Python and test artifacts
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local environments and editors
+.venv/
+venv/
+.idea/
+.vscode/
+*.user
+
+# Operating-system files
+Thumbs.db
+Desktop.ini
+.DS_Store

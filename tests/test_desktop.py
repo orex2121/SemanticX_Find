@@ -125,7 +125,7 @@ def test_file_type_filter_supports_multiple_persistent_choices(window):
  w.extension._apply_toggle(0,Qt.Unchecked);assert w.extension.selected_extensions()==[] and w.extension.lineEdit().text()==w.t('no_types_selected') and paths.settings()['selected_file_types']==[]
 def test_diagnostics_are_copyable_and_exclude_private_queries(window):
  w=window;w.query.setText('private search phrase');text=w.diagnostics_text()
- assert 'SemanticX Find 0.3.18-alpha' in text and 'EmbeddingGemma ready:' in text and 'private search phrase' not in text
+ assert 'SemanticX Find 0.3.19-alpha' in text and 'EmbeddingGemma ready:' in text and 'private search phrase' not in text
  w.copy_diagnostics();assert QApplication.clipboard().text()==text and w.status.text()==w.t('diagnostics_copied')
 def test_persistent_favorites(window,tmp_path):
  w=window;path=tmp_path/'favorite.json';path.write_text('{}');w.results=[{'path':str(path),'relative_path':'favorite.json','signals':{},'text':''}];w.refresh_result_items();w.toggle_favorite()
@@ -141,6 +141,16 @@ def test_file_drag_mime_supports_multiple_existing_files(window,tmp_path):
  for i in range(w.list.count()):w.list.item(i).setSelected(True)
  mime=w.list.drag_mime();urls=[Path(url.toLocalFile()) for url in mime.urls()]
  assert urls==[first.resolve(),second.resolve()] and str(first.resolve()) in mime.text() and str(missing) not in mime.text()
+ w.list.clearSelection();w.list.setCurrentRow(1);mime=w.list.drag_mime();assert [Path(url.toLocalFile()) for url in mime.urls()]==[second.resolve()]
+
+def test_catalog_stats_are_not_limited_by_visible_file_rows(window,tmp_path):
+ w=window;root=tmp_path/'large-catalog';root.mkdir();cat=engine.register(root);index=engine.Index(cat);db=index.connect()
+ try:
+  db.executemany("INSERT INTO files(relative_path,size,mtime_ns,content_hash,extractor_version,status,last_indexed,error) VALUES(?,?,?,?,?,?,?,?)",[(f'{i:04}.txt',1,i,str(i),'test','ready',float(i),None) for i in range(2005)]);db.commit()
+ finally:db.close()
+ w.data=[cat];engine.save_catalogs(w.data);w.build();w.catalog_list.setCurrentRow(0);w.catalog_selected()
+ assert w.catalog_file_list.count()==2000 and f'{w.t("catalog_files")}: 2005' in w.catalog_details.toPlainText() and f'{w.t("catalog_ready")}: 2005' in w.catalog_details.toPlainText()
+ assert Path(w.catalog_file_list.item(0).data(Qt.UserRole)).is_absolute()
 def test_search_results_export_csv_and_json(window,tmp_path):
  w=window;source=tmp_path/'результат.json';w.results=[dict(path=str(source),relative_path='папка/результат.json',catalog_id='cat-1',score=.875,size=123,mtime_ns=1700000000000000000,signals={'semantic':.9,'lexical':.5},text='private indexed contents')];csv_path=tmp_path/'results.csv';json_path=tmp_path/'results.json';w.export_results(csv_path);w.export_results(json_path)
  with csv_path.open(encoding='utf-8-sig',newline='') as stream:rows=list(csv.DictReader(stream))
@@ -148,7 +158,7 @@ def test_search_results_export_csv_and_json(window,tmp_path):
  assert rows[0]['filename']=='результат.json' and rows[0]['signal_semantic']=='0.9' and exported[0]['relative_path']=='папка/результат.json'
  assert 'private indexed contents' not in csv_path.read_text(encoding='utf-8-sig') and 'private indexed contents' not in json_path.read_text(encoding='utf-8') and not list(tmp_path.glob('*.part'))
 def test_vision_mode_indicator_and_catalog_configuration(window,tmp_path,monkeypatch):
- w=window;model_status=lambda ready:dict(ready=ready,files=14,total=14,installed_bytes=100,expected_bytes=100,revision='test');assert w.cfg['provider']=='gemma' and w.cfg['vision'] and w.cfg['ocr'] and w.vision_badge is None;monkeypatch.setattr(ui.ModelManager,'status',lambda self:model_status(True));w.refresh_vision_badge();assert w.vision_state()=='ready';monkeypatch.setattr(ui.ModelManager,'status',lambda self:model_status(False));w.refresh_vision_badge();assert w.vision_state()=='unavailable'
+ w=window;model_status=lambda ready:dict(ready=ready,files=14,total=14,installed_bytes=100,expected_bytes=100,revision='test');assert w.vision_state()=='disabled' and w.vision_badge is None;monkeypatch.setattr(ui.ModelManager,'status',lambda self:model_status(True));w.cfg.update(provider='gemma',vision=True);w.refresh_vision_badge();assert w.vision_state()=='ready';monkeypatch.setattr(ui.ModelManager,'status',lambda self:model_status(False));w.refresh_vision_badge();assert w.vision_state()=='unavailable'
  root=tmp_path/'visual-catalog';root.mkdir();cat=engine.register(root);w.data=[cat];engine.save_catalogs(w.data);w.build();w.apply_catalog_settings(w.data[0],{'visual':True});assert engine.catalogs()[0].visual and w.status.text()==w.t('catalog_saved_rebuild')
 def test_search_controls_have_visible_explanations(window):
  w=window;labels='\n'.join(label.text() for label in w.findChildren(ui.QLabel));assert w.t('catalog_scope_title') in labels and w.t('query_title') in labels and '<br>' not in labels
@@ -165,14 +175,14 @@ def test_model_actions_are_beside_each_model_and_vision_help_is_compact(window):
  w.keep_model_loaded.setChecked(False);w.save_settings();assert paths.settings()['keep_model_loaded'] is False and not w.keep_model_loaded.isChecked()
 def test_performance_settings_are_bounded_lists_with_tooltips(window):
  w=window;assert [w.index_workers.itemData(i) for i in range(w.index_workers.count())]==[2,4,8,16,32]
- assert [w.batch.itemData(i) for i in range(w.batch.count())]==[32,64,128,256,512] and w.batch.currentData()==64
+ assert [w.batch.itemData(i) for i in range(w.batch.count())]==[32,64,128,256,512] and w.batch.currentData()==128
  assert [w.index_queue_size.itemData(i) for i in range(w.index_queue_size.count())]==[16,32,64,128,256,512]
  controls=(w.language,w.theme,w.index_workers,w.batch,w.index_queue_size,w.result_count,w.engine,w.device,w.dimension,w.vision,w.ocr,w.keep_model_loaded,w.auto_update,w.auto_update_seconds)
  assert all(control.toolTip().strip() for control in controls) and 'does not affect' in w.result_count.toolTip()
  w.index_workers.setCurrentIndex(w.index_workers.findData(16));w.batch.setCurrentIndex(w.batch.findData(256));w.index_queue_size.setCurrentIndex(w.index_queue_size.findData(128));w.save_settings();saved=paths.settings()
  assert (saved['index_workers'],saved['batch_size'],saved['index_queue_size'])==(16,256,128)
 def test_performance_presets_apply_linked_values_and_manual_changes_become_custom(window):
- w=window;assert [w.performance_preset.itemData(i) for i in range(w.performance_preset.count())]==['custom','minimum','basic','balanced','high','maximum'] and w.performance_preset.currentData()=='basic'
+ w=window;assert [w.performance_preset.itemData(i) for i in range(w.performance_preset.count())]==['custom','minimum','basic','balanced','high','maximum']
  w.performance_preset.setCurrentIndex(w.performance_preset.findData('maximum'));assert (w.index_workers.currentData(),w.batch.currentData(),w.index_queue_size.currentData())==(32,512,256)
  assert w.performance_preset.toolTip()==w.t('performance_preset_help') and w.performance_preset.itemData(w.performance_preset.currentIndex(),Qt.ToolTipRole)==w.t('preset_maximum_help')
  w.batch.setCurrentIndex(w.batch.findData(128));assert w.performance_preset.currentData()=='custom'
@@ -183,7 +193,7 @@ def test_language_change_retranslates_the_entire_interface_immediately(window,ap
  assert w.settings_form.labelForField(w.performance_preset).text()==w.t('performance_preset') and w.performance_preset.toolTip()==w.t('performance_preset_help')
  assert w.tabs.currentIndex()==3
 def test_help_and_version_are_in_bottom_footer(window):
- w=window;assert w.menuBar().isHidden() and w.version_label.text()=='0.3.18-alpha' and w.help_button.text()==w.t('information')
+ w=window;assert w.menuBar().isHidden() and w.version_label.text()=='0.3.19-alpha' and w.help_button.text()==w.t('information')
  assert [action.text() for action in w.help_button.menu().actions()]==[w.t('about'),w.t('guide')]
 def test_busy_buttons_animate_and_restore(window):
  w=window;button=w.search_button;original=button.text();w.start_button_activity(button)

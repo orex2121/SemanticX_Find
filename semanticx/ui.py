@@ -29,16 +29,21 @@ class FileDragList(QListWidget):
    bar=self.verticalScrollBar();bar.setValue(bar.value()-int(delta));event.accept();return
   super().wheelEvent(event)
  def drag_mime(self):
-  paths=[]
-  for item in self.selectedItems():
+  paths=[];items=self.selectedItems() or ([self.currentItem()] if self.currentItem() else [])
+  for item in items:
    value=item.data(Qt.UserRole)
-   if value and Path(value).is_file():paths.append(str(Path(value).resolve()))
+   if value and Path(value).is_file():
+    path=str(Path(value).resolve())
+    if path not in paths:paths.append(path)
   if not paths:return None
   mime=QMimeData();mime.setUrls([QUrl.fromLocalFile(path) for path in paths]);mime.setText('\n'.join(paths));return mime
  def startDrag(self,supported_actions):
   mime=self.drag_mime()
   if not mime:return
-  drag=QDrag(self);drag.setMimeData(mime);drag.exec(Qt.CopyAction)
+  drag=QDrag(self);drag.setMimeData(mime)
+  item=self.currentItem()
+  if item and not item.icon().isNull():drag.setPixmap(item.icon().pixmap(72,72))
+  drag.exec(Qt.CopyAction,Qt.CopyAction)
 VISION_ROLE=Qt.UserRole+1
 def catalog_vision_indexed(catalog):
  base=Path(catalog.index_path);identity=read_json(base/'index.json',{}).get('identity',{});return (base/'manifest.sqlite').is_file() and bool(identity.get('visual'))
@@ -210,7 +215,7 @@ class Window(QMainWindow):
   self.result_count=QSpinBox();self.result_count.setRange(1,1000);self.result_count.setValue(self.cfg['result_count']);self.settings_row(form,'result_count',self.result_count,'result_count_help');self.engine=QComboBox();self.engine.addItems(['lexical','gemma']);self.engine.setCurrentText(self.cfg['provider']);self.settings_row(form,'provider',self.engine,'provider_help');self.device=QComboBox();self.device.addItems(['auto','cpu','cuda']);self.device.setCurrentText(self.cfg['device']);self.settings_row(form,'device',self.device,'device_help');self.dimension=QComboBox();self.dimension.addItems(['128','256','512','768']);self.dimension.setCurrentText(str(self.cfg['dimension']));self.settings_row(form,'dimension',self.dimension,'dimension_help');self.vision=QCheckBox(self.t('vision_enabled'));self.vision.setChecked(self.cfg.get('vision',False));self.vision.setToolTip(self.t('vision_help'));self.vision_help=QLabel(self.t('vision_help'));self.vision_help.setWordWrap(False);self.vision_help.setSizePolicy(QSizePolicy.Ignored,QSizePolicy.Preferred);self.vision_help.setToolTip(self.t('vision_help'));form.addRow(self.vision,self.vision_help);self.engine.currentTextChanged.connect(self.update_vision_controls);self.update_vision_controls();self.ocr=QCheckBox('OCR');self.ocr.setChecked(self.cfg.get('ocr',False));self.ocr.setToolTip(self.t('ocr_help'));self.ocr_help=QLabel(self.t('ocr_help'));self.ocr_help.setWordWrap(False);self.ocr_help.setSizePolicy(QSizePolicy.Ignored,QSizePolicy.Preferred);self.ocr_help.setToolTip(self.t('ocr_help'));form.addRow(self.ocr,self.ocr_help);self.keep_model_loaded=QCheckBox(self.t('keep_model_loaded'));self.keep_model_loaded.setChecked(self.cfg.get('keep_model_loaded',True));self.keep_model_loaded.setToolTip(self.t('keep_model_loaded_help'));self.keep_model_help=QLabel(self.t('keep_model_loaded_help'));self.keep_model_help.setWordWrap(False);self.keep_model_help.setSizePolicy(QSizePolicy.Ignored,QSizePolicy.Preferred);self.keep_model_help.setToolTip(self.t('keep_model_loaded_help'));form.addRow(self.keep_model_loaded,self.keep_model_help);self.auto_update=QCheckBox(self.t('auto_update'));self.auto_update.setChecked(self.cfg.get('auto_update',False));self.auto_update.setToolTip(self.t('auto_update_help'));form.addRow(self.auto_update);self.auto_update_seconds=QSpinBox();self.auto_update_seconds.setRange(15,3600);self.auto_update_seconds.setSuffix(' '+self.t('seconds'));self.auto_update_seconds.setValue(self.cfg.get('auto_update_seconds',60));self.settings_row(form,'auto_update_interval',self.auto_update_seconds,'auto_update_interval_help');form.addRow(self.button('save',self.save_settings));self.tabs.addTab(page,self.t('settings'))
   page=QWidget();box=QVBoxLayout(page);self.favorites_list=FileDragList();self.favorites_list.setToolTip(self.t('drag_files_hint'));self.favorites_list.itemDoubleClicked.connect(lambda item:self.favorite_action('open'));self.favorites_list.setContextMenuPolicy(Qt.CustomContextMenu);self.favorites_list.customContextMenuRequested.connect(self.show_favorite_menu);box.addWidget(self.favorites_list);row=QHBoxLayout()
   for key,action in [('open_file','open'),('open_folder','folder'),('copy_path','copy'),('remove_favorite','remove')]:row.addWidget(self.button(key,lambda checked=False,a=action:self.favorite_action(a)))
-  box.addLayout(row);self.tabs.addTab(page,self.t('favorites'));self.refresh_favorites();footer=QHBoxLayout();self.status=QLabel(self.t('ready'));self.status.setWordWrap(True);footer.addWidget(self.status,1);self.version_label=QLabel(__version__);footer.addWidget(self.version_label);self.help_button=QPushButton(self.t('information'));help_menu=QMenu(self.help_button);help_menu.addAction(self.t('about'),self.about);help_menu.addAction(self.t('guide'),lambda:open_path(ROOT/'README.md'));self.help_button.setMenu(help_menu);footer.addWidget(self.help_button);layout.addLayout(footer);self.setCentralWidget(central)
+  box.addLayout(row);self.tabs.addTab(page,self.t('favorites'));self.refresh_favorites();footer=QHBoxLayout();self.status=QLabel(self.t('ready'));self.status.setWordWrap(True);footer.addWidget(self.status,1);self.version_label=QLabel(__version__);footer.addWidget(self.version_label);self.help_button=QPushButton(self.t('information'));help_menu=QMenu(self.help_button);help_menu.addAction(self.t('about'),self.about);help_menu.addAction(self.t('guide'),lambda:open_path(ROOT/'README_RU.md'));self.help_button.setMenu(help_menu);footer.addWidget(self.help_button);layout.addLayout(footer);self.setCentralWidget(central)
   QApplication.instance().styleHints().setColorScheme({'system':Qt.ColorScheme.Unknown,'light':Qt.ColorScheme.Light,'dark':Qt.ColorScheme.Dark}[self.cfg['theme']])
   self.setStyleSheet('')
   button_feedback='QPushButton:pressed{background:#0f78aa;border-color:#a9e3ff;padding-top:11px;padding-bottom:7px} QPushButton[busy="true"]{background:#a45b08;border:2px solid #ffd37d;font-weight:700}'
@@ -459,14 +464,14 @@ class Window(QMainWindow):
    except Exception as e:self.catalog_details.setPlainText(str(e))
   else:self.catalog_details.clear();self.catalog_file_list.clear()
  def show_catalog_files(self,c,relative_paths=None):
-  index=Index(c,self.get_provider());files=index.files(limit=2000,relative_paths=relative_paths);state=index.state();ready=sum(x['status']=='ready' for x in files);errors=sum(x['status']=='error' for x in files);chunks=sum(x['chunks'] for x in files);last=max((x['last_indexed'] or 0 for x in files),default=0);online=Path(c.root).is_dir();state_text=self.t('index_'+state['status'])
+  index=Index(c,self.get_provider());files=index.files(limit=2000,relative_paths=relative_paths);stats=index.file_stats(relative_paths=relative_paths);state=index.state();online=Path(c.root).is_dir();state_text=self.t('index_'+state['status'])
   if state['differences']:state_text+=' ('+', '.join(state['differences'])+')'
-  lines=[f'{self.t("catalog_path")}: {c.root}',f'{self.t("catalog_status")}: {self.t("online") if online else self.t("offline")}',f'{self.t("catalog_index_state")}: {state_text}',f'{self.t("catalog_files")}: {len(files)}',f'{self.t("catalog_ready")}: {ready}',f'{self.t("catalog_chunks")}: {chunks}',f'{self.t("catalog_errors")}: {errors}',f'{self.t("catalog_last_indexed")}: {datetime.fromtimestamp(last).strftime("%Y-%m-%d %H:%M:%S") if last else self.t("never")}',f'{self.t("extensions")}: {", ".join(c.extensions)}',f'{self.t("catalog_index_path")}: {c.index_path}',f'{self.t("visual")}: {self.t("yes") if c.visual else self.t("no")}']
+  lines=[f'{self.t("catalog_path")}: {c.root}',f'{self.t("catalog_status")}: {self.t("online") if online else self.t("offline")}',f'{self.t("catalog_index_state")}: {state_text}',f'{self.t("catalog_files")}: {stats["files"]}',f'{self.t("catalog_ready")}: {stats["ready"]}',f'{self.t("catalog_chunks")}: {stats["chunks"]}',f'{self.t("catalog_errors")}: {stats["errors"]}',f'{self.t("catalog_last_indexed")}: {datetime.fromtimestamp(stats["last_indexed"]).strftime("%Y-%m-%d %H:%M:%S") if stats["last_indexed"] else self.t("never")}',f'{self.t("extensions")}: {", ".join(c.extensions)}',f'{self.t("catalog_index_path")}: {c.index_path}',f'{self.t("visual")}: {self.t("yes") if c.visual else self.t("no")}']
   self.catalog_details.setPlainText('\n'.join(lines));self.catalog_details.verticalScrollBar().setValue(0);self.catalog_file_list.clear()
   for item in files:
    marker='✓' if item['status']=='ready' else '⚠';line=f'{marker} {item["relative_path"]}  ·  {self.t("catalog_chunks")}: {item["chunks"]}'
    if item.get('error'):line+=f'  ·  {item["error"]}'
-   self.catalog_file_list.addItem(line);self.catalog_file_list.item(self.catalog_file_list.count()-1).setData(Qt.UserRole,item['relative_path'])
+   self.catalog_file_list.addItem(line);self.catalog_file_list.item(self.catalog_file_list.count()-1).setData(Qt.UserRole,str(Path(c.root)/item['relative_path']))
   if not files:self.catalog_file_list.addItem(self.t('catalog_empty'))
   elif self.catalog_file_list.count():self.catalog_file_list.setCurrentRow(0)
  def show_duplicates(self):
@@ -476,15 +481,15 @@ class Window(QMainWindow):
   except Exception as e:self.catalog_details.setPlainText(str(e));return
   groups={value:i+1 for i,value in enumerate(dict.fromkeys(x['content_hash'] for x in files))};self.catalog_details.setPlainText('\n'.join([f'{self.t("catalog_path")}: {c.root}',f'{self.t("duplicate_groups")}: {len(groups)}',f'{self.t("duplicate_files")}: {len(files)}']));self.catalog_file_list.clear()
   for item in files:
-   line=f'⧉ {self.t("duplicate_group")} {groups[item["content_hash"]]}  ·  {item["relative_path"]}  ·  {self.format_bytes(item["size"] or 0)}';self.catalog_file_list.addItem(line);self.catalog_file_list.item(self.catalog_file_list.count()-1).setData(Qt.UserRole,item['relative_path'])
+   line=f'⧉ {self.t("duplicate_group")} {groups[item["content_hash"]]}  ·  {item["relative_path"]}  ·  {self.format_bytes(item["size"] or 0)}';self.catalog_file_list.addItem(line);self.catalog_file_list.item(self.catalog_file_list.count()-1).setData(Qt.UserRole,str(Path(c.root)/item['relative_path']))
   if files:self.catalog_file_list.setCurrentRow(0)
   else:self.catalog_file_list.addItem(self.t('no_duplicates'))
  def catalog_file_action(self,action):
   c=self.current_catalog();item=self.catalog_file_list.currentItem()
   if not c or not item:return
-  relative=item.data(Qt.UserRole)
-  if not relative:return
-  path=Path(c.root)/relative
+  value=item.data(Qt.UserRole)
+  if not value:return
+  stored=Path(value);path=stored if stored.is_absolute() else Path(c.root)/stored
   if action=='open':open_path(path)
   elif action=='folder':open_path(path,True)
   elif action=='copy':QApplication.clipboard().setText(str(path))

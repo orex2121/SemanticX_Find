@@ -299,6 +299,14 @@ CREATE TRIGGER IF NOT EXISTS chunk_delete AFTER DELETE ON chunks BEGIN DELETE FR
   try:
    args=list(relative_paths or []);where=(' WHERE f.relative_path IN ('+','.join('?' for _ in args)+')') if args else ' WHERE 0' if relative_paths is not None else '';sql='SELECT f.*,count(c.id) chunks FROM files f LEFT JOIN chunks c ON c.file_id=f.id'+where+' GROUP BY f.id ORDER BY relative_path'+(' LIMIT '+str(int(limit)) if limit else '');return [dict(r) for r in db.execute(sql,args)]
   finally:db.close()
+ def file_stats(self,relative_paths=None):
+  if not (self.base/'manifest.sqlite').exists():return dict(files=0,ready=0,errors=0,chunks=0,last_indexed=0)
+  db=self.connect()
+  try:
+   args=list(relative_paths or []);where=(' WHERE f.relative_path IN ('+','.join('?' for _ in args)+')') if args else ' WHERE 0' if relative_paths is not None else ''
+   row=db.execute("SELECT count(*) files,coalesce(sum(f.status='ready'),0) ready,coalesce(sum(f.status='error'),0) errors,coalesce(sum(coalesce(c.chunks,0)),0) chunks,coalesce(max(f.last_indexed),0) last_indexed FROM files f LEFT JOIN (SELECT file_id,count(*) chunks FROM chunks GROUP BY file_id)c ON c.file_id=f.id"+where,args).fetchone()
+   return dict(row)
+  finally:db.close()
  def duplicates(self):
   if not (self.base/'manifest.sqlite').exists():return []
   db=self.connect()

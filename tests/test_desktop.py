@@ -27,10 +27,10 @@ def wait_idle(w):
  while w.busy() and time.monotonic()<deadline:QTest.qWait(10)
  assert not w.busy()
 def test_rebuild_preserves_state(window,app):
- w=window;image=paths.ROOT/'reference-image-with-a-long-descriptive-name.png';Image.new('RGB',(80,40),'navy').save(image);w.query.setText('Qwen редактирование');w.minimum.setValue(.25);w.modified.setCurrentIndex(w.modified.findData(7));w.max_size.setValue(25);w.tabs.setCurrentIndex(3);w.images=[str(image)];w.build()
+ w=window;image=paths.ROOT/'reference-image-with-a-long-descriptive-name.png';Image.new('RGB',(80,40),'navy').save(image);w.query.setText('Qwen редактирование');w.minimum.setValue(25);w.modified.setCurrentIndex(w.modified.findData(7));w.max_size.setValue(25);w.tabs.setCurrentIndex(3);w.images=[str(image)];w.build()
  assert w.query.text()=='Qwen редактирование'
  assert 'EmbeddingGemma 2' in w.model_status.toPlainText() and 'OCR' in w.ocr_status.toPlainText()
- assert w.minimum.value()==.25 and w.tabs.currentIndex()==3 and w.modified.currentData()==7 and w.max_size.value()==25
+ assert w.minimum.value()==25 and w.tabs.currentIndex()==3 and w.modified.currentData()==7 and w.max_size.value()==25
  assert not w.attachment_scroll.isHidden() and len(w.attachment_name_labels)==1
  assert w.attachment_name_labels[0].toolTip()==str(image)
  assert w.attachment_name_labels[0].text()!=image.name
@@ -125,7 +125,7 @@ def test_file_type_filter_supports_multiple_persistent_choices(window):
  w.extension._apply_toggle(0,Qt.Unchecked);assert w.extension.selected_extensions()==[] and w.extension.lineEdit().text()==w.t('no_types_selected') and paths.settings()['selected_file_types']==[]
 def test_diagnostics_are_copyable_and_exclude_private_queries(window):
  w=window;w.query.setText('private search phrase');text=w.diagnostics_text()
- assert 'SemanticX Find 0.3.19-alpha' in text and 'EmbeddingGemma ready:' in text and 'private search phrase' not in text
+ assert 'SemanticX Find 0.3.21-alpha' in text and 'EmbeddingGemma ready:' in text and 'private search phrase' not in text
  w.copy_diagnostics();assert QApplication.clipboard().text()==text and w.status.text()==w.t('diagnostics_copied')
 def test_persistent_favorites(window,tmp_path):
  w=window;path=tmp_path/'favorite.json';path.write_text('{}');w.results=[{'path':str(path),'relative_path':'favorite.json','signals':{},'text':''}];w.refresh_result_items();w.toggle_favorite()
@@ -193,7 +193,7 @@ def test_language_change_retranslates_the_entire_interface_immediately(window,ap
  assert w.settings_form.labelForField(w.performance_preset).text()==w.t('performance_preset') and w.performance_preset.toolTip()==w.t('performance_preset_help')
  assert w.tabs.currentIndex()==3
 def test_help_and_version_are_in_bottom_footer(window):
- w=window;assert w.menuBar().isHidden() and w.version_label.text()=='0.3.19-alpha' and w.help_button.text()==w.t('information')
+ w=window;assert w.menuBar().isHidden() and w.version_label.text()=='0.3.21-alpha' and w.help_button.text()==w.t('information')
  assert [action.text() for action in w.help_button.menu().actions()]==[w.t('about'),w.t('guide')]
 def test_busy_buttons_animate_and_restore(window):
  w=window;button=w.search_button;original=button.text();w.start_button_activity(button)
